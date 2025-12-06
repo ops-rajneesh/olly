@@ -1,0 +1,103 @@
+============================================
+Chaos Engineering Test Report
+Scenario: Application Cannot Scale Due to Namespace Quota
+Date: Sat Dec  6 21:58:48 IST 2025
+============================================
+
+1. CLUSTER STATUS
+=================
+Kubernetes control plane is running at https://ABA7E1C3EB7969136E9E78F3BBEC849D.gr7.ap-south-1.eks.amazonaws.com
+CoreDNS is running at https://ABA7E1C3EB7969136E9E78F3BBEC849D.gr7.ap-south-1.eks.amazonaws.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+2. NAMESPACE PODS
+=================
+NAME                               READY   STATUS             RESTARTS          AGE     IP            NODE                                        NOMINATED NODE   READINESS GATES
+accounting-6c8fcd898c-nn2xm        1/1     Running            295 (3h54m ago)   18d     10.5.17.162   ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+ad-68fff688f-klvkw                 1/1     Running            0                 8d      10.5.0.212    ip-10-5-27-86.ap-south-1.compute.internal   <none>           <none>
+cart-6dff6c8994-24pcc              0/1     Pending            0                 18s     <none>        <none>                                      <none>           <none>
+cart-6dff6c8994-nwcj8              1/1     Running            0                 8d      10.5.26.85    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+checkout-75ff8fc86f-n7bcj          1/1     Running            0                 14d     10.5.29.41    ip-10-5-27-86.ap-south-1.compute.internal   <none>           <none>
+currency-59c9c5b557-kn8wg          1/1     Running            0                 18d     10.5.21.129   ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+daemonset-otel-agent-4wwvh         1/1     Running            0                 8d      10.5.1.66     ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+daemonset-otel-agent-cq6w7         1/1     Running            0                 8d      10.5.31.82    ip-10-5-3-64.ap-south-1.compute.internal    <none>           <none>
+daemonset-otel-agent-jks4f         1/1     Running            0                 8d      10.5.12.243   ip-10-5-2-1.ap-south-1.compute.internal     <none>           <none>
+daemonset-otel-agent-qb66k         1/1     Running            0                 8d      10.5.13.129   ip-10-5-27-86.ap-south-1.compute.internal   <none>           <none>
+daemonset-otel-agent-tqslt         1/1     Running            0                 8d      10.5.29.210   ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+email-979476c59-222tg              1/1     Running            0                 14d     10.5.0.175    ip-10-5-2-1.ap-south-1.compute.internal     <none>           <none>
+flagd-76d98d45f5-bw9g4             2/2     Running            0                 8d      10.5.5.6      ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+fraud-detection-74c7757879-j8szf   1/1     Running            0                 18d     10.5.7.199    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+frontend-5c4cfb58d7-k6rqd          1/1     Running            0                 14d     10.5.7.72     ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+frontend-5c4cfb58d7-wb28q          0/1     Pending            0                 18s     <none>        <none>                                      <none>           <none>
+frontend-proxy-6bb94d786f-wc7lh    1/1     Running            0                 14d     10.5.24.105   ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+grafana-75d59cdff4-7djrb           4/4     Running            0                 14d     10.5.2.48     ip-10-5-3-64.ap-south-1.compute.internal    <none>           <none>
+image-provider-687cd466bf-zltwl    1/1     Running            0                 18d     10.5.25.53    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+jaeger-8556cdf449-7f9d6            1/1     Running            0                 18d     10.5.31.117   ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+kafka-6f596699d7-j5t7p             1/1     Running            1 (3d10h ago)     14d     10.5.12.187   ip-10-5-3-64.ap-south-1.compute.internal    <none>           <none>
+load-generator-7d75dd5fb4-m5hzd    1/1     Running            0                 14d     10.5.30.238   ip-10-5-3-64.ap-south-1.compute.internal    <none>           <none>
+otel-collector-66f584ff99-wp867    1/1     Running            0                 2d12h   10.5.20.95    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+payment-5c46d9d5-876cj             1/1     Running            0                 18d     10.5.22.126   ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+postgresql-9f8cff57f-xcz8t         1/1     Running            0                 18d     10.5.5.38     ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+product-catalog-589bcf4889-kh5bv   1/1     Running            0                 14d     10.5.4.75     ip-10-5-27-86.ap-south-1.compute.internal   <none>           <none>
+prometheus-f44cb948d-8lm6d         0/1     CrashLoopBackOff   1063 (61s ago)    4d2h    10.5.29.69    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+quote-648c98fdcd-xvfgq             1/1     Running            0                 14d     10.5.18.50    ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+recommendation-6888db4747-hk6v2    1/1     Running            0                 18d     10.5.28.17    ip-10-5-2-1.ap-south-1.compute.internal     <none>           <none>
+shipping-6cd45944d5-pn78h          1/1     Running            0                 18d     10.5.10.195   ip-10-5-7-201.ap-south-1.compute.internal   <none>           <none>
+valkey-cart-7845fbb7d6-rwltn       1/1     Running            0                 14d     10.5.9.147    ip-10-5-10-61.ap-south-1.compute.internal   <none>           <none>
+
+3. RESOURCE QUOTA
+=================
+Name:            otel-demo-pod-quota
+Namespace:       otel-demo
+Resource         Used  Hard
+--------         ----  ----
+pods             0     10
+requests.cpu     0     5
+requests.memory  0     5Gi
+
+4. HPA STATUS
+==============
+NAME           REFERENCE             TARGETS                               MINPODS   MAXPODS   REPLICAS   AGE
+cart-hpa       Deployment/cart       cpu: <unknown>/70%, memory: 38%/80%   2         8         2          34s
+checkout-hpa   Deployment/checkout   cpu: <unknown>/70%, memory: 71%/80%   2         6         2          34s
+frontend-hpa   Deployment/frontend   cpu: <unknown>/70%, memory: 48%/80%   2         10        2          34s
+
+5. PENDING PODS
+===============
+NAME                        READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+cart-6dff6c8994-24pcc       0/1     Pending   0          19s   <none>   <none>   <none>           <none>
+frontend-5c4cfb58d7-wb28q   0/1     Pending   0          19s   <none>   <none>   <none>           <none>
+
+6. RECENT EVENTS
+================
+LAST SEEN   TYPE      REASON                         OBJECT                                 MESSAGE
+20s         Warning   FailedScheduling               pod/frontend-5c4cfb58d7-wb28q          0/5 nodes are available: 5 Too many pods. no new claims to deallocate, preemption: 0/5 nodes are available: 5 No preemption victims found for incoming pod.
+19s         Warning   FailedScheduling               pod/cart-6dff6c8994-24pcc              0/5 nodes are available: 5 Too many pods. no new claims to deallocate, preemption: 0/5 nodes are available: 5 No preemption victims found for incoming pod.
+2m5s        Warning   BackOff                        pod/prometheus-f44cb948d-8lm6d         Back-off restarting failed container prometheus-server in pod prometheus-f44cb948d-8lm6d_otel-demo(8dd3c979-0f1d-4756-b7ca-b827a742fa08)
+69s         Normal    Pulled                         pod/prometheus-f44cb948d-8lm6d         Container image "quay.io/prometheus/prometheus:v3.6.0" already present on machine
+20s         Normal    SuccessfulCreate               replicaset/frontend-5c4cfb58d7         Created pod: frontend-5c4cfb58d7-wb28q
+20s         Normal    SuccessfulCreate               replicaset/cart-6dff6c8994             Created pod: cart-6dff6c8994-24pcc
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-jdz8m" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-qqwbg" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-qbcn9" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-lntmf" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-9596b" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-6vdmq" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+20s         Normal    ScalingReplicaSet              deployment/frontend                    Scaled up replica set frontend-5c4cfb58d7 from 1 to 2
+20s         Normal    ScalingReplicaSet              deployment/checkout                    Scaled up replica set checkout-75ff8fc86f from 1 to 2
+20s         Normal    SuccessfulRescale              horizontalpodautoscaler/cart-hpa       New size: 2; reason: Current number of replicas below Spec.MinReplicas
+20s         Normal    ScalingReplicaSet              deployment/cart                        Scaled up replica set cart-6dff6c8994 from 1 to 2
+20s         Normal    SuccessfulRescale              horizontalpodautoscaler/checkout-hpa   New size: 2; reason: Current number of replicas below Spec.MinReplicas
+20s         Normal    SuccessfulRescale              horizontalpodautoscaler/frontend-hpa   New size: 2; reason: Current number of replicas below Spec.MinReplicas
+19s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-jff4m" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+19s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-msbzn" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+18s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-v5vrg" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+9s          Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         (combined from similar events): Error creating: pods "checkout-75ff8fc86f-rb5k8" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+5s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/cart-hpa       failed to get cpu utilization: missing request for cpu in container cart of Pod cart-6dff6c8994-nwcj8
+5s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/frontend-hpa   failed to get cpu utilization: missing request for cpu in container frontend of Pod frontend-5c4cfb58d7-k6rqd
+5s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/frontend-hpa   invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container frontend of Pod frontend-5c4cfb58d7-k6rqd
+5s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/cart-hpa       invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container cart of Pod cart-6dff6c8994-nwcj8
+5s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/checkout-hpa   invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container checkout of Pod checkout-75ff8fc86f-n7bcj
+5s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/checkout-hpa   failed to get cpu utilization: missing request for cpu in container checkout of Pod checkout-75ff8fc86f-n7bcj
+

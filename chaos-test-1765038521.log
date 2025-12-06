@@ -1,0 +1,89 @@
+[0;34m[2025-12-06 21:58:41][0m ============================================
+[0;34m[2025-12-06 21:58:41][0m Chaos Engineering: Namespace Quota Scenario
+[0;34m[2025-12-06 21:58:41][0m ============================================
+[0;34m[2025-12-06 21:58:41][0m 
+[0;34m[2025-12-06 21:58:41][0m Checking prerequisites...
+[0;32m[✓][0m kubectl found
+[0;32m[✓][0m Connected to Kubernetes cluster
+[0;32m[✓][0m Namespace otel-demo exists
+[0;34m[2025-12-06 21:58:43][0m Monitoring existing chaos scenario...
+[0;34m[2025-12-06 21:58:43][0m Phase 4: Monitoring HPA status...
+[0;34m[2025-12-06 21:58:43][0m HPA: frontend-hpa
+  Normal  SuccessfulRescale  13s   horizontal-pod-autoscaler  New size: 2; reason: Current number of replicas below Spec.MinReplicas
+[0;34m[2025-12-06 21:58:44][0m HPA: cart-hpa
+  Normal  SuccessfulRescale  14s   horizontal-pod-autoscaler  New size: 2; reason: Current number of replicas below Spec.MinReplicas
+[0;34m[2025-12-06 21:58:44][0m HPA: checkout-hpa
+  Normal  SuccessfulRescale  15s   horizontal-pod-autoscaler  New size: 2; reason: Current number of replicas below Spec.MinReplicas
+[0;34m[2025-12-06 21:58:45][0m Phase 5: Checking for pending pods...
+[1;33m[!][0m Found pending pods (expected - this indicates the chaos scenario is working):
+NAME                        READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+cart-6dff6c8994-24pcc       0/1     Pending   0          15s   <none>   <none>   <none>           <none>
+frontend-5c4cfb58d7-wb28q   0/1     Pending   0          15s   <none>   <none>   <none>           <none>
+[0;34m[2025-12-06 21:58:45][0m Phase 6: Analyzing Kubernetes events...
+[0;34m[2025-12-06 21:58:45][0m Recent events related to scheduling:
+15s         Warning   FailedScheduling               pod/frontend-5c4cfb58d7-wb28q          0/5 nodes are available: 5 Too many pods. no new claims to deallocate, preemption: 0/5 nodes are available: 5 No preemption victims found for incoming pod.
+15s         Warning   FailedScheduling               pod/cart-6dff6c8994-24pcc              0/5 nodes are available: 5 Too many pods. no new claims to deallocate, preemption: 0/5 nodes are available: 5 No preemption victims found for incoming pod.
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-jdz8m" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-qqwbg" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-qbcn9" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-lntmf" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-9596b" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+15s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-6vdmq" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+14s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-jff4m" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+14s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-msbzn" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+13s         Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         Error creating: pods "checkout-75ff8fc86f-v5vrg" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+4s          Warning   FailedCreate                   replicaset/checkout-75ff8fc86f         (combined from similar events): Error creating: pods "checkout-75ff8fc86f-rb5k8" is forbidden: minimum memory usage per Container is 64Mi, but request is 20Mi
+0s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/cart-hpa       failed to get cpu utilization: missing request for cpu in container cart of Pod cart-6dff6c8994-nwcj8
+0s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/frontend-hpa   failed to get cpu utilization: missing request for cpu in container frontend of Pod frontend-5c4cfb58d7-k6rqd
+0s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/frontend-hpa   invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container frontend of Pod frontend-5c4cfb58d7-k6rqd
+0s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/cart-hpa       invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container cart of Pod cart-6dff6c8994-nwcj8
+0s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/checkout-hpa   invalid metrics (1 invalid out of 2), first error is: failed to get cpu resource metric value: failed to get cpu utilization: missing request for cpu in container checkout of Pod checkout-75ff8fc86f-n7bcj
+0s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/checkout-hpa   failed to get cpu utilization: missing request for cpu in container checkout of Pod checkout-75ff8fc86f-n7bcj
+[0;34m[2025-12-06 21:58:46][0m Phase 7: Checking quota usage...
+[0;34m[2025-12-06 21:58:46][0m Quota Status:
+[1;33m[!][0m Pod quota is FULL (/) - HPA will fail to scale
+[0;34m[2025-12-06 21:58:46][0m Phase 8: Checking Prometheus metrics...
+[0;34m[2025-12-06 21:58:46][0m Querying Prometheus for HPA and quota metrics...
+[0;34m[2025-12-06 21:58:47][0m Prometheus queries to run manually (after port-forward):
+  kubectl port-forward svc/prometheus 9090:9090 -n otel-demo
+
+  Then visit: http://localhost:9090 and run:
+    - kube_hpa_status_desired_replicas{namespace="otel-demo"}
+    - kube_hpa_status_current_replicas{namespace="otel-demo"}
+    - kube_resourcequota_pods_used{namespace="otel-demo"}
+[0;34m[2025-12-06 21:58:47][0m Phase 9: Collecting service logs (frontend)...
+[0;34m[2025-12-06 21:58:47][0m Frontend pod logs:
+}
+Error: 2 UNKNOWN: Application error processing RPC
+    at <unknown> (.next/server/pages/api/data.js:1:718)
+    at new Promise (<anonymous>) {
+  code: 2,
+  details: 'Application error processing RPC',
+  metadata: [Metadata]
+}
+Error: 2 UNKNOWN: Application error processing RPC
+    at <unknown> (.next/server/pages/api/data.js:1:718)
+    at new Promise (<anonymous>) {
+  code: 2,
+  details: 'Application error processing RPC',
+  metadata: [Metadata]
+}
+Error: 14 UNAVAILABLE: read ECONNRESET
+    at <unknown> (.next/server/pages/api/data.js:1:718)
+    at new Promise (<anonymous>) {
+  code: 14,
+  details: 'read ECONNRESET',
+  metadata: [Metadata]
+}
+Error: 14 UNAVAILABLE: read ECONNRESET
+    at <unknown> (.next/server/pages/api/data.js:1:718)
+    at new Promise (<anonymous>) {
+  code: 14,
+  details: 'read ECONNRESET',
+  metadata: [Metadata]
+}
+Error: 14 UNAVAILABLE: No connection established. Last error: connect ECONNREFUSED 172.20.171.86:8080 (2025-11-28T11:31:07.051Z)
+[0;34m[2025-12-06 21:58:48][0m Phase 10: Generating report...
+[0;32m[✓][0m Report saved to: chaos-test-report-1765038528.txt
+[0;34m[2025-12-06 21:58:50][0m Test completed. Check log file: chaos-test-1765038521.log
+[0;32m[✓][0m All chaos engineering tests completed!
